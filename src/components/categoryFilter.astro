@@ -1,0 +1,66 @@
+---
+const { category } = Astro.props;
+import "../styles/global.css";
+---
+
+<script>
+  const handleOptionChange = () => {
+    console.log("Filter changed");
+    const selection = [
+      ...document.querySelectorAll(".filteroption-category:checked"),
+    ].map(($input) => $input.value);
+
+    if (selection.length > 0) {
+      document
+        .querySelectorAll("[data-category]")
+        .forEach(($li) => $li.classList.add("hidden"));
+
+      selection.forEach((category) => {
+        document
+          .querySelectorAll(`[data-category="${category}"]`)
+          .forEach(($li) => $li.classList.remove("hidden"));
+      });
+    } else {
+      document
+        .querySelectorAll("[data-category]")
+        .forEach(($li) => $li.classList.remove("hidden"));
+    }
+  };
+
+  document.addEventListener("astro:page-load", () => {});
+  const options = document.querySelectorAll(".filteroption-category");
+  options.forEach((option) =>
+    option.addEventListener("change", handleOptionChange)
+  );
+</script>
+
+<ul class="category_names_main">
+  <li class="category_filtering">
+    <label>
+      <input
+        class="filteroption-category"
+        type="checkbox"
+        value={category}
+        name="brand-filter"
+      />
+      <span class="category_name">{category}</span>
+    </label>
+  </li>
+</ul>
+
+<style>
+  .category_names_main {
+    margin-top: 1.2rem;
+  }
+
+  .category_filtering {
+    width: max-content;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .category_name {
+    font-family: "Poppins", sans-serif;
+    font-size: 1rem;
+  }
+</style>

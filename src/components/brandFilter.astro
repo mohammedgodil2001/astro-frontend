@@ -1,0 +1,66 @@
+---
+const { name } = Astro.props;
+import "../styles/global.css";
+---
+
+<script>
+  const handleOptionChange = () => {
+    console.log("Filter changed");
+    const selection = [
+      ...document.querySelectorAll(".filteroption-brand:checked"),
+    ].map(($input) => $input.value);
+
+    if (selection.length > 0) {
+      document
+        .querySelectorAll("[data-brand]")
+        .forEach(($li) => $li.classList.add("hidden"));
+
+      selection.forEach((category) => {
+        document
+          .querySelectorAll(`[data-brand="${category}"]`)
+          .forEach(($li) => $li.classList.remove("hidden"));
+      });
+    } else {
+      document
+        .querySelectorAll("[data-brand]")
+        .forEach(($li) => $li.classList.remove("hidden"));
+    }
+  };
+
+  document.addEventListener("astro:page-load", () => {});
+  const options = document.querySelectorAll(".filteroption-brand");
+  options.forEach((option) =>
+    option.addEventListener("change", handleOptionChange)
+  );
+</script>
+
+<ul class="brand_names_main">
+  <li class="brand_filtering">
+    <label>
+      <input
+        class="filteroption-brand"
+        type="checkbox"
+        value={name}
+        name="brand-filter"
+      />
+      <span class="brand_name">{name}</span>
+    </label>
+  </li>
+</ul>
+
+<style>
+  .brand_names_main {
+    margin-top: 1.2rem;
+  }
+
+  .brand_filtering {
+    width: max-content;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .brand_name {
+    font-family: "Poppins", sans-serif;
+    font-size: 1rem;
+  }
+</style>

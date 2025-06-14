@@ -1,0 +1,70 @@
+---
+const { id, name, description, image } = Astro.props;
+import "../styles/global.css";
+import { Image, Picture } from "astro:assets";
+---
+
+<article class="perfume-card">
+  <Image
+    src={import.meta.env.PUBLIC_STRAPI_URL + image[0].url}
+    alt={name}
+    class="perfume-image"
+    width="200"
+    height="250"
+    fit="cover"
+    sizes="160px"
+  />
+
+  <h2>{name}</h2>
+  <p>{description}</p>
+  <!-- <p>{description.substring(0, 100)}...</p> -->
+  <a href={`/perfumes/${id}`} class="view-details">View Details</a>
+</article>
+
+
+
+<style>
+  h2 {
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin-top: 0.8rem;
+    margin-bottom: 0.8rem;
+  }
+
+  p {
+    line-height: 1.5;
+    font-size: 0.95rem;
+  }
+
+  .perfume-card {
+    border: 1px solid #ddd;
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 8px;
+    width: 18rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: "Poppins", sans-serif;
+  }
+
+  .perfume-image {
+    width: 10rem;
+    height: 12rem;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .view-details {
+    text-decoration: none;
+    color: black;
+    padding: 0.7rem 1.3rem;
+    background-color: lightblue;
+    border-radius: 5px;
+    margin-top: 1rem;
+  }
+
+  .view-details:hover {
+    color: #0070f3;
+  }
+</style>

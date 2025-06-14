@@ -1,0 +1,142 @@
+---
+import fetchApi from "../../lib/strapi";
+
+import { Image, Picture } from "astro:assets";
+
+import DetailCard from "../../components/perfumeDetail.astro";
+
+import Header from "../../components/header.astro";
+import Footer from "../../components/footer.astro";
+import BaseLayout from "../../layouts/baseLayout.astro";
+
+import "../../styles/global.css";
+
+// Generate paths for static site generation
+export async function getStaticPaths() {
+  const perfumes = await fetchApi({
+    endpoint: "perfumes?populate=*",
+    wrappedByKey: "data",
+  });
+
+  // Create paths for each perfume
+  const paths = perfumes.map((perfume) => ({
+    params: { id: perfume.id.toString() },
+    props: { perfume },
+  }));
+
+  return paths;
+}
+
+const { perfume } = Astro.props;
+
+const relatedPerfumes = await fetchApi({
+  endpoint: `perfumes?filters[category][name][$eq]=${perfume.category.name}&populate=*`,
+  wrappedByKey: "data",
+});
+
+const relatedPerfumesFiltered = relatedPerfumes.filter(
+  (related) => related.id !== perfume.id
+);
+---
+
+<BaseLayout>
+  <DetailCard
+    name={perfume.name}
+    category={perfume.category.name}
+    image={import.meta.env.PUBLIC_STRAPI_URL + perfume.image[0].url}
+    launch_year={perfume.launch_year}
+    recommended_for={perfume.recommended_for}
+    fun_fact={perfume.fun_fact}
+    price_range={perfume.price_range}
+    brand={perfume.brand.name}
+    fragrance_notes={perfume.fragrance_notes}
+    perfumers={perfume.perfumers}
+  />
+  <section class="related_perfumes">
+    <h2>More from {perfume.category.name} Category</h2>
+    <ul>
+      {
+        relatedPerfumesFiltered.map((related) => (
+          <li>
+            <a href={`/perfumes/${related.id}`}>
+              <Image
+                src={import.meta.env.PUBLIC_STRAPI_URL + related.image[0].url}
+                alt={related.name}
+                class="perfume-image"
+                width="150"
+                height="180"
+                fit="cover"
+                sizes="160px"
+              />
+              <h3>{related.name}</h3>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>
+
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+  }
+  .related_perfumes {
+    margin: 2rem 0;
+    padding: 2rem;
+    border-radius: 8px;
+    /* margin: auto; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .related_perfumes h2 {
+    font-family: "Poppins", sans-serif;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: #333;
+  }
+
+  .related_perfumes ul {
+    display: flex;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .related_perfumes li {
+    width: 220px;
+    padding: 1rem;
+    background: #fff;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .related_perfumes a {
+    text-decoration: none;
+    color: inherit;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    gap: 1rem;
+  }
+
+  .related_perfumes img {
+    /* width: 20rem; */
+    width: 10rem;
+    height: 10rem;
+    object-fit: cover;
+  }
+
+  .related_perfumes h3 {
+    font-size: 1.1rem;
+    margin-top: 1rem;
+    color: #333;
+  }
+</style>

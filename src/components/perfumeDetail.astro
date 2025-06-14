@@ -1,0 +1,222 @@
+---
+import "../styles/global.css";
+import "../styles/reset.css";
+
+import { Image, Picture } from "astro:assets";
+
+const {
+  name,
+  category,
+  image,
+  launch_year,
+  recommended_for,
+  fun_fact,
+  price_range,
+  brand,
+  fragrance_notes,
+  perfumers,
+} = Astro.props;
+
+const groupedNotes = {};
+fragrance_notes.forEach((note) => {
+  if (!groupedNotes[note.type]) {
+    groupedNotes[note.type] = [];
+  }
+  groupedNotes[note.type].push(note.name);
+});
+---
+
+<article class="perfume-detail">
+  <section class="perfume-image">
+    <h2 class="visually-hidden">Perfume Image</h2>
+    <Image
+      src={image}
+      alt={name}
+      class="perfume-image"
+      width="350"
+      height="400"
+      fit="cover"
+      sizes="320px"
+    />
+  </section>
+
+  <section>
+    <header class="perfume-header">
+      <h1>{name}</h1>
+      <p class="category">
+        <a href="/categories">
+          <span class="flower_category">Category:</span>
+          {category}
+        </a>
+      </p>
+    </header>
+
+    <section class="perfume-info">
+      <h2 class="visually-hidden">Perfume Information</h2>
+      <p><span class="launch_year">Launch Year:</span> {launch_year}</p>
+      <p><span class="recommended">Recommended For:</span> {recommended_for}</p>
+      <p><span class="fact">Fun Fact:</span> {fun_fact}</p>
+      <p><span class="price_range">Price Range:</span> {price_range}</p>
+    </section>
+
+    <section class="perfume-brand">
+      <h2 class="visually-hidden">Perfume Brand</h2>
+      <a href={`/brands/${brand}`}>
+        <p><span class="brand">Brand:</span> {brand}</p>
+      </a>
+    </section>
+
+    <section class="fragrance-notes">
+      <h2>Fragrance Notes</h2>
+      <dl>
+        {
+          Object.keys(groupedNotes).map((type) => (
+            <div>
+              <dt>
+                {type}{" "}
+                {Object.keys(groupedNotes).length > 1 ? "note:" : "notes:"}
+              </dt>
+              {groupedNotes[type].map((name) => (
+                <dd key={name}>{name}</dd>
+              ))}
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
+    <section class="perfumer">
+      <h2>Perfumer</h2>
+      <ul>
+        {perfumers.map((perfumer) => <li>{perfumer.name}</li>)}
+      </ul>
+    </section>
+  </section>
+</article>
+
+<style>
+  p {
+    line-height: 1.5;
+  }
+
+  .fragrance-notes {
+    margin-top: 1rem;
+  }
+
+  dl,
+  .perfumer {
+    font-family: "Poppins", sans-serif;
+  }
+
+  .perfumer h2 {
+    font-weight: 500;
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .perfumer li {
+    font-size: 0.9rem;
+    margin-top: 0.4rem;
+  }
+
+  dt {
+    font-weight: 420;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    margin-left: 0.5rem;
+  }
+
+  dd {
+    margin-left: 0.5rem;
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+    margin-left: 1rem;
+  }
+
+  .fragrance-notes h2 {
+    font-weight: 520;
+    font-size: 1.1rem;
+  }
+
+  .perfume-detail {
+    font-family: "Poppins", sans-serif;
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 3rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    /* align-items: center; */
+    gap: 3.5rem;
+  }
+
+  .category {
+    font-family: "Poppins", sans-serif;
+  }
+
+  .perfume-header h1 {
+    margin: 0;
+    font-size: 2rem;
+    color: #222;
+    font-family: "Poppins", sans-serif;
+  }
+
+  .perfume-header .category {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 1rem;
+  }
+
+  img {
+    width: 20rem;
+    height: 25rem;
+    object-fit: cover;
+  }
+
+  .perfume-info p,
+  .perfume-brand {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    font-family: "Poppins", sans-serif;
+  }
+
+  .perfume-info p {
+    margin-top: 1rem;
+  }
+
+  .fragrance-notes ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .fragrance-notes li {
+    /* background: #f9f9f9; */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+  }
+
+  .perfumer p {
+    font-size: 1rem;
+    margin: 0.5rem 0;
+  }
+
+  .launch_year,
+  .recommended,
+  .fact,
+  .price_range,
+  .brand {
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+  }
+</style>

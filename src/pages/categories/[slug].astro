@@ -1,0 +1,162 @@
+---
+import fetchApi from "../../lib/strapi";
+
+import { Image, Picture } from "astro:assets";
+
+import Header from "../../components/header.astro";
+import Footer from "../../components/footer.astro";
+import BaseLayout from "../../layouts/baseLayout.astro";
+
+import PerfumeCard from "../../components/perfumeCard.astro";
+
+import "../../styles/reset.css";
+import "../../styles/global.css";
+
+export async function getStaticPaths() {
+  const categories = await fetchApi({
+    endpoint: "categories?populate=*",
+    wrappedByKey: "data",
+  });
+
+  const paths = categories.map((category) => ({
+    params: { slug: category.name },
+    props: { category },
+  }));
+
+  return paths;
+}
+
+const { category } = Astro.props;
+
+const relatedCategories = await fetchApi({
+  endpoint: `perfumes?filters[category][name][$eq]=${category.name}&populate=*`,
+  wrappedByKey: "data",
+});
+---
+
+<BaseLayout>
+  <div>
+    <ul class="perfumeList">
+      {
+        relatedCategories.map((perfumes) => (
+          <li>
+            <article class="perfume-card">
+              {perfumes.image && perfumes.image.length > 0 ? (
+                perfumes.image[0].formats &&
+                perfumes.image[0].formats.thumbnail ? (
+                  <Image
+                    src={
+                      import.meta.env.PUBLIC_STRAPI_URL +
+                      perfumes.image[0].formats.thumbnail.url
+                    }
+                    alt={perfumes.name}
+                    class="perfume-image"
+                    width="200"
+                    height="250"
+                    fit="cover"
+                    sizes="128px"
+                  />
+                ) : (
+                  <Image
+                    src={
+                      import.meta.env.PUBLIC_STRAPI_URL + perfumes.image[0].url
+                    }
+                    alt={perfumes.name}
+                    class="perfume-image"
+                    width="200"
+                    height="250"
+                    fit="cover"
+                    sizes="128px"
+                  />
+                )
+              ) : (
+                <div class="no-image-placeholder">No Image Available</div>
+              )}
+              <h2>{perfumes.name}</h2>
+              <p>
+                {perfumes.description?.[0]?.children?.[0]?.text?.substring(
+                  0,
+                  100
+                ) || ""}
+              </p>
+              <a href={`/perfumes/${perfumes.id}`} class="view-details">
+                View Details
+              </a>
+            </article>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</BaseLayout>
+
+
+
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+  }
+
+  .perfumeList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    font-family: "Poppins", sans-serif;
+    justify-content: flex-start;
+    padding: 2rem;
+  }
+
+  .perfumeList li {
+    margin: 0;
+  }
+
+  .perfume-card {
+    border: 1px solid #ddd;
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 8px;
+    width: 16rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: "Poppins", sans-serif;
+  }
+
+  .perfume-image {
+    width: 8rem;
+    height: 10rem;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+
+  .perfume-card h2 {
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin: 0.8rem 0;
+    text-align: center;
+  }
+
+  .perfume-card p {
+    line-height: 1.5;
+    font-size: 0.95rem;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .view-details {
+    text-decoration: none;
+    color: black;
+    padding: 0.7rem 1.3rem;
+    background-color: lightblue;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+</style>

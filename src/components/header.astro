@@ -1,0 +1,51 @@
+---
+import "../styles/global.css";
+---
+
+<header class="header">
+  <nav class="nav">
+    <h1><a href="/" class="site-title">Perfume Collection</a></h1>
+    <ul class="nav-list">
+      <li><a href="/" class="nav-link">Home</a></li>
+      <li><a href="/categories" class="nav-link">Categories</a></li>
+      <li><a href="/brands" class="nav-link">Brands</a></li>
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .header {
+    font-family: "Poppins", sans-serif;
+    padding: 1rem;
+    background: #f8f8f8;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .site-title {
+    text-decoration: none;
+    color: black;
+  }
+
+  .nav-list {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-link {
+    text-decoration: none;
+    color: black;
+  }
+
+  .nav-link:hover {
+    color: #0070f3; /* Optional hover effect */
+  }
+</style>

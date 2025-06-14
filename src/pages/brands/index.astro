@@ -1,0 +1,42 @@
+---
+import Header from "../../components/header.astro";
+import Footer from "../../components/footer.astro";
+import BaseLayout from "../../layouts/baseLayout.astro";
+import "../../styles/global.css";
+import "../../styles/reset.css";
+
+import BrandCard from "../../components/brandCard.astro";
+
+import fetchApi from "../../lib/strapi";
+
+const brands = await fetchApi({
+  endpoint: "brands?populate=*",
+  wrappedByKey: "data",
+});
+---
+
+<BaseLayout>
+  <div class="brand_card_main">
+    {
+      brands.map((brand) => (
+        <BrandCard
+          name={brand.name}
+          image={brand.image[0].url}
+          slug={brand.name}
+        />
+      ))
+    }
+  </div>
+</BaseLayout>
+
+
+
+<style>
+  .brand_card_main {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: flex-start;
+    padding: 2rem;
+  }
+</style>

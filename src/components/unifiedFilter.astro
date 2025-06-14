@@ -1,0 +1,127 @@
+---
+const { brands, categories } = Astro.props;
+import "../styles/global.css";
+---
+
+<script>
+  const handleOptionChange = () => {
+    console.log("Filter changed");
+
+    
+    const selectedBrands = [
+      ...document.querySelectorAll(".filteroption-brand:checked"),
+    ].map(($input) => $input.value);
+
+    
+    const selectedCategories = [
+      ...document.querySelectorAll(".filteroption-category:checked"),
+    ].map(($input) => $input.value);
+
+    document.querySelectorAll("[data-brand][data-category]").forEach(($li) => {
+      const brand = $li.getAttribute("data-brand");
+      const category = $li.getAttribute("data-category");
+
+      const matchesBrand =
+        selectedBrands.length === 0 || selectedBrands.includes(brand);
+      const matchesCategory =
+        selectedCategories.length === 0 ||
+        selectedCategories.includes(category);
+
+      if (matchesBrand && matchesCategory) {
+        $li.classList.remove("hidden");
+      } else {
+        $li.classList.add("hidden");
+      }
+    });
+  };
+
+  document.addEventListener("astro:page-load", () => {});
+  const options = document.querySelectorAll(
+    ".filteroption-brand, .filteroption-category"
+  );
+  options.forEach((option) =>
+    option.addEventListener("change", handleOptionChange)
+  );
+</script>
+
+<section class="filter-section">
+  <article>
+    <h2 class="filter-heading">Brand Filter</h2>
+    <ul class="brand-names">
+      {
+        brands.map((brand) => (
+          <li class="filter-item">
+            <label>
+              <input
+                class="filteroption-brand"
+                type="checkbox"
+                value={brand.name}
+                name="brand-filter"
+              />
+              <span>{brand.name}</span>
+            </label>
+          </li>
+        ))
+      }
+    </ul>
+  </article>
+
+  <article>
+    <h2 class="filter-heading">Category Filter</h2>
+    <ul class="category-names">
+      {
+        categories.map((category) => (
+          <li class="filter-item">
+            <label>
+              <input
+                class="filteroption-category"
+                type="checkbox"
+                value={category.name}
+                name="category-filter"
+              />
+              <span>{category.name}</span>
+            </label>
+          </li>
+        ))
+      }
+    </ul>
+  </article>
+</section>
+
+<style>
+  .filter-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 1.2rem;
+    padding: 2rem;
+    padding-right: 4rem;
+  }
+
+  .filter-heading {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  .brand-names,
+  .category-names {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .filter-item {
+    margin-bottom: 0.5rem;
+    width: max-content;
+  }
+
+  label {
+    font-family: "Poppins", sans-serif;
+    font-size: 1rem;
+  }
+
+  input {
+    margin-right: 0.5rem;
+  }
+</style>

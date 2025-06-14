@@ -1,0 +1,15 @@
+{
+  "name": "users-macbookair-desktop-web-assignment-astro-and-strapi-client",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview --host",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^5.0.4",
+    "qs": "^6.13.1"
+  }
+}

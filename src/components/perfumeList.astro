@@ -1,0 +1,43 @@
+---
+import fetchApi from "../lib/strapi";
+import PerfumeCard from "./perfumeCard.astro";
+
+import "../styles/global.css";
+
+
+const perfumes = await fetchApi(
+  {
+    endpoint: "perfumes?populate=*",
+    wrappedByKey: "data",
+  },
+);
+
+---
+
+<ul class="perfumeList">
+  {
+    perfumes.map((perfuming) => (
+      <li
+        data-brand={perfuming.brand.name}
+        data-category={perfuming.category.name.toLowerCase()}
+      >
+        <PerfumeCard
+          id={perfuming.id}
+          name={perfuming.name}
+          description={
+            perfuming.description[0].children[0].text.substring(0, 90) + "..."
+          }
+          image={perfuming.image}
+        />
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .perfumeList {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+</style>
